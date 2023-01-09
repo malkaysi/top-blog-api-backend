@@ -1,5 +1,9 @@
 var express = require('express');
 var path = require('path');
+const session = require("express-session");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const mongoose = require("mongoose");
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var dotenv = require('dotenv');
@@ -12,7 +16,6 @@ dotenv.config();
 var app = express();
 
 // Set up mongoose connection
-const mongoose = require("mongoose");
 const mongoDB = process.env.MONGODB_URI;
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
