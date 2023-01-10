@@ -8,14 +8,19 @@ var bcrypt = require('bcryptjs');
 
 // Signup
 exports.signup_post = async (req, res, next) => {
-  /* User.find({ username: req.body.username })
-  .exec(function (err, user) {
-    if (err) {
-      return next(err);
-    } else if (user) {
+  // Check if a username already exists
+  User.find({ username: req.body.username })
+    .exec(function (err, user) {;
+      if (err) {
+        return next(err);
+      }
 
-    }
-  }) */
+      if (user) {
+        return res.status(400).json({
+          message: 'Please choose a unique username',
+        })
+      }
+    });
 
   const inputtedPassword = await req.body.password;
 
