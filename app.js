@@ -1,8 +1,6 @@
 var express = require('express');
 var path = require('path');
-const session = require("express-session");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
+var passport = require('passport');
 const mongoose = require("mongoose");
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -10,6 +8,9 @@ var dotenv = require('dotenv');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+const blogRouter = require('./routes/blog'); //Import routes for "blog" area of site
+
+require('./passport');
 
 dotenv.config();
 
@@ -21,7 +22,7 @@ mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
-
+app.use(passport.initialize());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -30,5 +31,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/blog', blogRouter);
 
 module.exports = app;
