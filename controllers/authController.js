@@ -45,7 +45,13 @@ exports.signup_post = async (req, res, next) => {
   });
 }
 
-// Login
+// Login page get
+
+exports.login_get = (req, res, next) => {
+  res.send("TODO: Navigate to login page form if user is not authenticated")
+}
+
+// Login Post
 exports.login_post = (req, res, next) => {
   passport.authenticate('local', { session: false }, (err, user, info) => {
     if (err || !user) {
