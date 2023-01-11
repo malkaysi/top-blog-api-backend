@@ -10,15 +10,16 @@ var bcrypt = require('bcryptjs');
 exports.signup_post = async (req, res, next) => {
   // Check if a username already exists
   User.find({ username: req.body.username })
-    .exec(function (err, user) {;
+    .exec(function (err, user) {
       if (err) {
         return next(err);
       }
 
-      if (user) {
-        return res.status(400).json({
+      if (user.length) {
+        res.status(400).json({
           message: 'Please choose a unique username',
         })
+        return next('Please choose a unique')
       }
     });
 
@@ -61,7 +62,9 @@ exports.login_post = (req, res, next) => {
 
       // generate a signed son web token with the contents of user object and return it in the response
 
-      const token = jwt.sign({username: user.username, password: user.password}, {expiresIn: '1d'}, process.env.JWT_SECRET);
+      const token = jwt.sign({ username: user.username, password: user.password },  process.env.JWT_SECRET, { expiresIn: '1 day' },);
+      req.userId = user._id
+      req.token = token
       return res.json({ user, token });
     });
   })(req, res);
@@ -69,10 +72,6 @@ exports.login_post = (req, res, next) => {
 
 // Logout
 exports.logout_post = (req, res, next) => {
-  req.logout(function (err) {
-    if (err) {
-      return next(err);
-    }
-    res.redirect('/');
-  })
+  // This needs to be built on client side
+  // replace jwt token in local storage to '' to log the user out
 };
