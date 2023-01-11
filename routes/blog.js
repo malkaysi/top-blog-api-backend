@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const passport = require('passport');
+
 
 // Require controller modules
 const auth_controller = require("../controllers/authController");
@@ -10,7 +12,7 @@ const auth_controller = require("../controllers/authController");
 router.post("/login", auth_controller.login_post);
 
 // Post request to logout
-router.post("/logout", auth_controller.logout_post);
+router.post("/logout", passport.authenticate('jwt', {session: false}), auth_controller.logout_post);
 
 // Post request to signup
 router.post("/signup", auth_controller.signup_post);

@@ -61,7 +61,7 @@ exports.login_post = (req, res, next) => {
 
       // generate a signed son web token with the contents of user object and return it in the response
 
-      const token = jwt.sign(user, process.env.JWT_SECRET);
+      const token = jwt.sign({username: user.username, password: user.password}, {expiresIn: '1d'}, process.env.JWT_SECRET);
       return res.json({ user, token });
     });
   })(req, res);
@@ -69,5 +69,10 @@ exports.login_post = (req, res, next) => {
 
 // Logout
 exports.logout_post = (req, res, next) => {
-  res.send("Test");
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect('/');
+  })
 };
