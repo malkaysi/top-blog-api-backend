@@ -9,6 +9,7 @@ var dotenv = require('dotenv');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const blogRouter = require('./routes/blog'); //Import routes for "blog" area of site
+const loginRouter = require('./routes/login');
 
 require('./passport');
 
@@ -32,5 +33,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/blog', blogRouter);
+app.use('/login', loginRouter);
 
 module.exports = app;
