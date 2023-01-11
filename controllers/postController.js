@@ -1,4 +1,6 @@
 const express = require('express');
+const { isEmpty } = require('lodash');
+const Post = require('../models/post');
 const router = express.Router();
 
 // Handle home page
@@ -12,9 +14,43 @@ exports.new_post_entry_get = (req, res) => {
 }
 
 // Handle post entry submission on post
-exports.new_post_entry_post = (req, res) => {
+exports.new_post_entry_post = (req, res, next) => {
   // Toggle for publish to either post for public or keep it internally
-  res.send('TODO: Submit new post to save')
+  /* 
+  title: { type: String, required: true, maxLength: 15 },
+  entry: { type: String, required: true, maxLength: 1000 },
+  isPublished: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  date_published: { type: Date },
+  user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  */
+
+  // Get user Id from the URL
+  // Get other fields from the body
+  // Send the post to database under post collection
+  if (isEmpty(req.body.title)) {
+    return res.status(400).json({ error: 'Incorrect post entry information provided' });
+  }
+
+  const post = new Post({
+    title: req.body.title,
+    entry: req.body.entry,
+    isPublished: req.body.isPublished,
+    date_published: req.body.date_published,
+    user: req.params.id,
+  });
+
+  post.save((err) => {
+    if (err) {
+      return next(err)
+    };
+
+    return res.json(post)
+  })
+
 }
 
 // Handle update post form on get
