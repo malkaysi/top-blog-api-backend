@@ -7,7 +7,7 @@ const User = require("../models/user");
 var bcrypt = require('bcryptjs');
 
 // Signup
-exports.signup_post = async (req, res, next) => {
+exports.signup_post = (req, res, next) => {
   // Check if a username already exists
   User.find({ username: req.body.username })
     .exec(function (err, user) {
@@ -19,27 +19,29 @@ exports.signup_post = async (req, res, next) => {
         res.status(400).json({
           message: 'Please choose a unique username',
         })
-        return next('Please choose a unique')
+        return next('Please choose a unique username')
       }
     });
 
-  const inputtedPassword = await req.body.password;
+  // const inputtedPassword = req.body.password;
 
   bcrypt.genSalt(10, function (err, salt) {
-    bcrypt.hash(inputtedPassword, salt, function (err, hash) {
+    bcrypt.hash(req.body.password, salt, function (err, hash) {
       if (err) {
         return next(err)
       }
 
       const user = new User({
         username: req.body.username,
-        password: hash
-      });
-
-      user.save(err => {
+        password: hash,
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+      }).save(( err, user ) => {
         if (err) {
           return next(err);
         }
+
+        return res.json(user)
       });
     });
   });
