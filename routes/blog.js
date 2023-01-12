@@ -16,14 +16,14 @@ router.get("/profile/:id", auth.required, user_controller.profile_get);
 
 // POST ROUTES //
 
-// Get request for blog post form
-router.get("/user/:id/post", post_controller.new_post_entry_get);
-
 // Post request to submit a new blog entry
 router.post("/user/:id/post", auth.required, post_controller.new_post_entry_post);
 
+// Put request to update a blog entry
+router.put("/post/:id/update", auth.required, post_controller.update_post_entry_post);
+
 // Post request to delete a blog entry
-router.post("/user/:id/post/:id/delete", auth.required, post_controller.post_entry_delete_post);
+router.post("/post/:id/delete", auth.required, post_controller.post_entry_delete_post);
 
 // COMMENT ROUTES //
 

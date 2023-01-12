@@ -7,6 +7,8 @@ const UserSchema = new Schema({
   password: { type: String, required: true },
   first_name: { type: String, required: true, maxLength: 15 },
   last_name: { type: String, required: true, maxLength: 15 },
+}, {
+  toJSON: { virtuals: true }, // So `res.json()` and other `JSON.stringify()` functions include virtuals
 });
 
 // Virtual for user's URL
@@ -20,10 +22,10 @@ UserSchema.virtual('name').get(function () {
   // To avoid errors in cases where a user does not have either a family name or first name
   // We want to make sure we handle the exception by returning an empty string for that case
   let fullname = "";
-  if (this.first_name && this.family_name) {
-    fullname = `${this.family_name}, ${this.first_name}`;
+  if (this.first_name && this.last_name) {
+    fullname = `${this.last_name}, ${this.first_name}`;
   }
-  if (!this.first_name || !this.family_name) {
+  if (!this.first_name || !this.last_name) {
     fullname = "";
   }
   return fullname;

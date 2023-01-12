@@ -4,33 +4,21 @@ const Post = require('../models/post');
 const router = express.Router();
 
 // Handle home page
-exports.index = (req, res) => {
-  // Display list of published posts
-  // Title and author for published posts
-}
-// Handle post entry form on get
-exports.new_post_entry_get = (req, res) => {
-  res.send('TODO: Clicking new post brings you to the new post page')
+exports.index = (req, res, next) => {
+  // Get list of published posts for home page
+  Post.find({isPublished: true }, 'title user date_published')
+    .populate('user', 'first_name last_name name')
+    .exec(function (err, publishedPosts) {
+      if (err) {
+        return next(err)
+      }
+
+      return res.json(publishedPosts);
+    })
 }
 
 // Handle post entry submission on post
 exports.new_post_entry_post = (req, res, next) => {
-  // Toggle for publish to either post for public or keep it internally
-  /* 
-  title: { type: String, required: true, maxLength: 15 },
-  entry: { type: String, required: true, maxLength: 1000 },
-  isPublished: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
-  date_published: { type: Date },
-  user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  */
-
-  // Get user Id from the URL
-  // Get other fields from the body
-  // Send the post to database under post collection
   if (isEmpty(req.body.title)) {
     return res.status(400).json({ error: 'Incorrect post entry information provided' });
   }
@@ -53,17 +41,65 @@ exports.new_post_entry_post = (req, res, next) => {
 
 }
 
-// Handle update post form on get
-exports.update_post_entry_get = (req, res) => {
-  res.send('TODO: Clicking edit button takes you to the update post entry')
-}
-
 // Handle update post form on post
 exports.update_post_entry_post = (req, res) => {
-  res.send('TODO: Submit updated post to save')
+  if (isEmpty(req.params.id)) {
+    return res.status(400).json({ error: 'Unable to find post' });
+  }
+
+  Post.findById(req.params.id)
+    .populate("user")
+    .exec(function (err, post) {
+      if (err) {
+        return next(err)
+      }
+
+      const existingUserFromPost = post.user.id
+
+      // Check that the user making the request is the owner of the post
+      if (req.body.userId !== existingUserFromPost) {
+        return res.status(400).json({ error: "Unauthorized" })
+      }
+
+        post.title = req.body.title,
+        post.entry = req.body.entry,
+        post.isPublished = req.body.isPublished,
+        post.date_published = req.body.date_published,
+        post.user = req.body.userId,
+        post._id = req.params.id
+
+      post.save((err) => {
+        if (err) {
+          return next(err)
+        };
+
+        return res.json(post)
+      })
+    })
 }
 
 // Handle delete post on post
-exports.post_entry_delete_post = (req, res) => {
-  res.send('TODO: Delete entry on post')
+exports.post_entry_delete_post = (req, res, next) => {
+  if (isEmpty(req.params.id)) {
+    return res.status(400).json({ error: 'Unable to find post' });
+  }
+
+  Post.findById(req.params.id)
+    .populate("user")
+    .exec(function (err, post) {
+      if (err) {
+        return next(err)
+      }
+
+      const postUser = post.user.id
+
+      if (req.body.userId !== postUser) {
+        return res.status(400).json({ error: "Unauthorized", postUser })
+      }
+
+
+      post.deleteOne();
+
+      return res.json("Post deleted")
+    })
 }
