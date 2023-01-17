@@ -41,12 +41,12 @@ passport.use(new JWTStrategy({
   function (jwtPayload, cb) {
 
     //find the user in db if needed. This functionality may be omitted if you store everything you'll need in JWT payload.
-    return User.find({username: jwtPayload.username })
-      .then(user => {
-        return cb(null, user);
-      })
-      .catch(err => {
-        return cb(err);
+    User.findById({ _id: jwtPayload.user.id })
+      .exec(function (err, user){
+        if (err) {
+          return cb(err)
+        }
+        return cb(null, user)
       });
   }
 ));

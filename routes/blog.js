@@ -31,7 +31,7 @@ router.post("/post/:id/delete", auth.required, post_controller.post_entry_delete
 router.post("/post/:id/comment", auth.required, comment_controller.new_comment_entry_post);
 
 // Post request to delete a comment on a blog post
-router.post("/post/:id/comment/:id", auth.required, comment_controller.comment_delete_post);
+router.delete("/post/:id/comment/:commentId", auth.required, comment_controller.comment_delete_post);
 
 
 // Don't need a post list get because they'll be displayed on the home page

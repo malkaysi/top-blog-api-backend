@@ -69,11 +69,13 @@ exports.login_post = (req, res, next) => {
       }
 
       // generate a signed son web token with the contents of user object and return it in the response
+      const body = { id: user._id, username: user.username };
 
-      const token = jwt.sign({ username: user.username, password: user.password },  process.env.JWT_SECRET, { expiresIn: '1 day' },);
-      req.userId = user._id
+      const token = jwt.sign({ user: body },  process.env.JWT_SECRET, { expiresIn: '1 day' });
+      req.userId = user._id;
+      req.user = user;
       req.token = token
-      return res.json({ user, token });
+      return res.json({ body, token });
     });
   })(req, res);
 };
