@@ -1,4 +1,5 @@
 var express = require('express');
+var cors = require('cors')
 var path = require('path');
 var passport = require('passport');
 const mongoose = require("mongoose");
@@ -24,6 +25,7 @@ mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
+app.use(cors())
 app.use(bodyParser.urlencoded({
   extended: true
 }));
