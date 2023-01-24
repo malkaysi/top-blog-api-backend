@@ -104,3 +104,20 @@ exports.post_entry_delete_post = (req, res, next) => {
       return res.json("Post deleted")
     })
 }
+
+// Handle blog post detail on get
+exports.detailed_blog_post = (req, res, next) => {
+  if(isEmpty(req.params.id)) {
+    return res.status(400).json({ error: 'Unable to find post' });
+  }
+
+  Post.findById(req.params.id)
+    .populate("user")
+    .exec(function (err, post) {
+      if (err) {
+        return next(err)
+      }
+
+      return res.json(post);
+    })
+}

@@ -25,6 +25,9 @@ router.put("/post/:id/update", auth.required, post_controller.update_post_entry_
 // Post request to delete a blog entry
 router.post("/post/:id/delete", auth.required, post_controller.post_entry_delete_post);
 
+// Get request for detailed blog post
+router.get("/post/:id", auth.required, post_controller.detailed_blog_post);
+
 // COMMENT ROUTES //
 
 // Post request to create a comment on blog post
