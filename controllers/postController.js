@@ -6,7 +6,7 @@ const router = express.Router();
 // Handle home page
 exports.index = (req, res, next) => {
   // Get list of published posts for home page
-  Post.find({isPublished: true }, 'title user date_published')
+  Post.find({isPublished: true }, 'title user date_published imageUrl')
     .populate('user', 'first_name last_name name')
     .exec(function (err, publishedPosts) {
       if (err) {
@@ -29,6 +29,7 @@ exports.new_post_entry_post = (req, res, next) => {
     isPublished: req.body.isPublished,
     date_published: req.body.date_published,
     user: req.params.id,
+    imageUrl: req.body.imageUrl ? req.body.imageUrl : 'https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1679&q=80'
   });
 
   post.save((err) => {
